@@ -1,3 +1,3 @@
 document.body.inner
 
-console.assert
+console.assert.call.arguments
