@@ -1,0 +1,88 @@
+**Ответственный:** 
+
+| ФИО | Контакты |
+| --- | --- |
+| Виталий Биркин | @Vitaly\_Birkin |
+
+| Задача в JIRA |
+| --- |
+| [LMS-216](https://jira-labs.globus-ltd.com/browse/LMS-216) |
+
+![](https://confluence-labs.globus-ltd.com/plugins/servlet/confluence/placeholder/macro?definition=e3RvY30&locale=ru_RU&version=2)
+
+## Общие сведения
+
+<table><tbody><tr><th>Наименование метода</th><td>Создание нового модуля</td></tr><tr><th>Метод</th><td>POST &nbsp;/api/v2/modules</td></tr><tr><th>Назначение метода</th><td><span style="color:var(--ds-text-accent-purple-bolder,#352c63);">Создает новый модуль</span></td></tr><tr><th>Формат сообщения</th><td>json</td></tr><tr><th>Тип запроса</th><td>Синхронный</td></tr></tbody></table>
+
+## Ошибки
+
+Ошибки, не описанные в данном документе, смотри в разделе ["Общие ошибки"](https://confluence-labs.globus-ltd.com/spaces/GLOB/pages/46663813/%D0%9E%D0%B1%D1%89%D0%B8%D0%B5+%D0%BE%D1%88%D0%B8%D0%B1%D0%BA%D0%B8)
+
+## Алгоритм
+
+| п.п. | Шаг | Описание | Комментарий | Маппинг |
+| --- | --- | --- | --- | --- |
+| 1 | Проверка доступа | 
+Проверка заголовка X-Auth-Role
+
+Валидные роли:
+
+ADMIN / MENTOR
+
+ | 
+
+Если роль неверна - ошибка 403  
+  
+ 
+
+<table><tbody><tr><td>{ &nbsp;"code": 403, &nbsp;"message": "Forbidden" }</td></tr></tbody></table>
+
+
+
+ | Через заголовки API Gateway |
+| 2 | Валидация входных данных | Backend проверяет входные данные | 
+
+Если не пройдено  - ошибка 400  
+  
+ 
+
+<table><tbody><tr><td>{ &nbsp;"code": 400, &nbsp;"status": "BAD_REQUEST", &nbsp;"errorType": "USER_ERROR", &nbsp;"message": "Ошибка валидации", &nbsp;"retryable": false, &nbsp;"path": "uri=/api/v1/users", &nbsp;"timestampz": "2026-01-26T17:03:27.562370600Z", &nbsp;"traceId": "9586761bd5245e0ba22e8bd10a067eac", &nbsp;"fieldsError": [ &nbsp; &nbsp;{ &nbsp; &nbsp; &nbsp;"field": "email", &nbsp; &nbsp; &nbsp;"rejectedValue": "345611mail.ru", &nbsp; &nbsp; &nbsp;"message": "Email must be valid", &nbsp; &nbsp; &nbsp;"errorCode": "Email" &nbsp; &nbsp;}, &nbsp; &nbsp;{ &nbsp; &nbsp; &nbsp;"field": "userName", &nbsp; &nbsp; &nbsp;"rejectedValue": "56", &nbsp; &nbsp; &nbsp;"message": "User name must be between 3 and 20 characters", &nbsp; &nbsp; &nbsp;"errorCode": "Size" &nbsp; &nbsp;} &nbsp;] }</td></tr></tbody></table>
+
+ | 
+
+Входящие параметры
+
+ |
+| 3 | Запись в БД | Значения входящих параметров записать в БД согласно маппинга | Входящий параметр = таблица.поле в БД | 
+
+*   moduleId = assignment.title
+*   title \= assignment.title
+*   description = assignment.description
+
+ |
+| 4 | Возврат ответа | 201 OK | Смотри пример в "Исходящие параметры" |   |
+
+## Входящие параметры
+
+**Источник**: экранная форма с Front
+
+**Структура**
+
+| Наименование | Тип | Обяз. | Описание | Пример |
+| --- | --- | --- | --- | --- |
+| moduleId | string(uuid) | + | Идентификатор модуля  | 9e9cc5d5-ff59-4e60-b2c4-fd2b02e5b9c1 |
+| title | string(150) | + | Название домашнего задания | Домашнее задание 3 |
+| description | string(max) | + | Описание домашнего задания | Написать SQL - запрос, в котором..... |
+
+<table><tbody><tr><td>{ &nbsp;"moduleId": "9e9cc5d5-ff59-4e60-b2c4-fd2b02e5b9c1", &nbsp;"title": "Домашнее задание 3", &nbsp;"description": "Написать SQL - запрос, в котором....." }</td></tr></tbody></table>
+
+## Исходящие параметры (ответ 201)
+
+**Структура**
+
+| Наименование | Тип | Обяз. | Описание | Источник | Комментарий | Пример |
+| --- | --- | --- | --- | --- | --- | --- |
+| assignmentId  
+  | string(uuid) | + | Идентификатор домашнего задания | [assignment.id](http://assignment.id) |   | 5586933c-4f98-46f8-99a4-fbc912e5c97d |
+
+<table><tbody><tr><td>{ &nbsp;"assignmentId": "5586933c-4f98-46f8-99a4-fbc912e5c97d" }</td></tr></tbody></table>
