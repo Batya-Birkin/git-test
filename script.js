@@ -4,4 +4,4 @@ console.assert.call.arguments
 
 moveBy.name.length
 
-focus.call
+focus.call.arguments
